@@ -6,7 +6,7 @@ struct Dog: Codable, CustomStringConvertible, Identifiable {
     var description: String { "\(name) is a \(breed)"}
     var id: String { name }
     
-    // Can also specify different names to use for JSON keys.
+    // Can also use this to specify different names for the JSON keys.
     enum CodingKeys: CodingKey {
         case name
         case breed
@@ -55,7 +55,6 @@ struct ContentView: View {
     
     func deleteDogs(at offsets: IndexSet) {
         dogs.remove(atOffsets: offsets)
-        print("deleteDogs: dogs =", dogs)
         save()
     }
     
@@ -82,7 +81,6 @@ struct ContentView: View {
                     List {
                         ForEach(dogs) { dog in
                             Text(String(describing: dog))
-                            //Text("\(dog.name) is a \(dog.breed)")
                         }
                         .onDelete(perform: deleteDogs)
                     }
