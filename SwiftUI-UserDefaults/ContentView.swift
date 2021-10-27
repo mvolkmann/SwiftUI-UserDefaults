@@ -1,10 +1,9 @@
 import SwiftUI
 
-//struct Dog: Codable, CustomStringConvertible, Identifiable {
-struct Dog: Codable, Identifiable {
+struct Dog: Codable, CustomStringConvertible, Identifiable {
     var name: String
     var breed: String
-    //var description: String { "\(name) is a \(breed)"}
+    var description: String { "\(name) is a \(breed)"}
     var id: String { name }
     
     // Can also specify different names to use for JSON keys.
@@ -12,6 +11,10 @@ struct Dog: Codable, Identifiable {
         case name
         case breed
     }
+}
+
+func deleteData(for key: String) {
+    UserDefaults.standard.removeObject(forKey: key)
 }
 
 func getData<T>(for key: String, defaultingTo defaultValue: T) -> T where T: Decodable {
@@ -42,6 +45,18 @@ struct ContentView: View {
     
     init() {
         dogs = getData(for: ContentView.KEY, defaultingTo: [])
+        print("init: dogs =", dogs)
+    }
+    
+    func deleteAll() {
+        deleteData(for: ContentView.KEY)
+        dogs = []
+    }
+    
+    func deleteDogs(at offsets: IndexSet) {
+        dogs.remove(atOffsets: offsets)
+        print("deleteDogs: dogs =", dogs)
+        save()
     }
     
     func save() {
@@ -49,25 +64,32 @@ struct ContentView: View {
     }
     
     var body: some View {
-        VStack {
-            Form {
-                TextField("Name", text: $name)
-                TextField("Breed", text: $breed)
-                Button("Add") {
-                    dogs.append(Dog(name: name, breed: breed))
-                    save()
-                    name = ""
-                    breed = ""
-                }
-            }
-            Section(header: Text("Dogs")) {
-                List {
-                    ForEach(dogs) { dog in
-                        //Text(String(describing: dog))
-                        Text("\(dog.name) is a \(dog.breed)")
+        NavigationView {
+            VStack {
+                Section(header: Text("New Dog")) {
+                    Form {
+                        TextField("Name", text: $name)
+                        TextField("Breed", text: $breed)
+                        Button("Add") {
+                            dogs.append(Dog(name: name, breed: breed))
+                            save()
+                            name = ""
+                            breed = ""
+                        }
                     }
                 }
-            }
+                Section(header: Text("Current Dogs")) {
+                    List {
+                        ForEach(dogs) { dog in
+                            Text(String(describing: dog))
+                            //Text("\(dog.name) is a \(dog.breed)")
+                        }
+                        .onDelete(perform: deleteDogs)
+                    }
+                    Button("Delete All", action: deleteAll)
+                }
+                Spacer()
+            }.navigationBarTitle("Dog Collection", displayMode: .inline)
         }
     }
 }
