@@ -1,5 +1,9 @@
 import SwiftUI
 
+// We can't use @AppStorage in place of directly access UserDefaults here
+// because we need to store an array of struct instances
+// and @AppStorage only supports primitive types.
+
 struct Dog: Codable, CustomStringConvertible, Identifiable {
     var name: String
     var breed: String
