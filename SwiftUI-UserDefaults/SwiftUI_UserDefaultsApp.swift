@@ -1,10 +1,3 @@
-//
-//  SwiftUI_UserDefaultsApp.swift
-//  SwiftUI-UserDefaults
-//
-//  Created by R. Mark Volkmann on 10/27/21.
-//
-
 import SwiftUI
 
 @main
